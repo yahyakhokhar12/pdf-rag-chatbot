@@ -26,7 +26,7 @@ export default function DocumentsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Documents</h1>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Files</h1>
           <p className="text-slate-500 mt-1 text-sm">Manage your uploaded PDFs and knowledge base.</p>
         </div>
       </div>

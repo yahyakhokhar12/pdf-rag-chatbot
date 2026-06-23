@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { MessageSquare, Sparkles, Zap, LayoutTemplate, Shield, Bot } from 'lucide-react';
 import { useChat } from '@/hooks/use-chat';
-import { chatService, Source } from '@/services/chat-service';
-import { ChatSidebar } from '@/components/chat/chat-sidebar';
+import { Source } from '@/services/chat-service';
 import { ChatInput } from '@/components/chat/chat-input';
 import { ChatMessage } from '@/components/chat/chat-message';
 import { SourcesPanel } from '@/components/chat/sources-panel';
@@ -47,11 +45,6 @@ export default function NewChatPage() {
 
   const { messages, isTyping, currentConvId, sendMessage, relatedQuestions } = useChat();
 
-  const { data: convData, isLoading: convLoading } = useQuery({
-    queryKey: ['conversations'],
-    queryFn: () => chatService.getConversations(1, 50),
-  });
-
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,13 +63,11 @@ export default function NewChatPage() {
 
   return (
     <div className="absolute inset-0 flex chat-stage">
-      <ChatSidebar conversations={convData?.conversations || []} isLoading={convLoading} />
-
       <div className="flex-1 flex flex-col min-w-0 relative">
-        <div ref={scrollRef} className="flex-1 overflow-y-auto pb-36 pt-4">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto pb-44 sm:pb-40 pt-3 sm:pt-4">
           {messages.length === 0 ? (
             /* Empty state */
-            <div className="max-w-2xl mx-auto px-4 mt-16 md:mt-24 animate-fade-in">
+            <div className="max-w-2xl mx-auto px-3 sm:px-4 mt-10 sm:mt-16 md:mt-24 animate-fade-in">
               <div className="text-center mb-10">
                 {/* AI logo */}
                 <div className="relative inline-block mb-6">
@@ -93,16 +84,16 @@ export default function NewChatPage() {
                   </div>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
                   How can I help you?
                 </h1>
-                <p className="text-slate-500 max-w-md mx-auto leading-relaxed text-base">
+                <p className="text-slate-500 max-w-md mx-auto leading-relaxed text-sm sm:text-base">
                   Ask me anything about your uploaded documents. I'll provide precise answers with source citations.
                 </p>
               </div>
 
               {/* Suggestion cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {SUGGESTIONS.map((s, i) => {
                   const Icon = s.icon;
                   return (
@@ -127,7 +118,7 @@ export default function NewChatPage() {
               </div>
             </div>
           ) : (
-            <div className="max-w-4xl mx-auto divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+            <div className="max-w-4xl mx-auto divide-y px-1 sm:px-0" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
               {messages.map((msg, i) => (
                 <ChatMessage
                   key={msg.id || i}
@@ -162,7 +153,7 @@ export default function NewChatPage() {
         {/* Floating input */}
         <div className="absolute bottom-0 left-0 right-0"
              style={{ background: 'linear-gradient(to top, rgba(3, 8, 10, 0.96) 52%, transparent)' }}>
-          <div className="pt-8">
+          <div className="pt-6 sm:pt-8">
             <ChatInput onSendMessage={handleSend} isTyping={isTyping} />
           </div>
         </div>

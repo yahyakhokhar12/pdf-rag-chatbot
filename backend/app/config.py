@@ -10,7 +10,7 @@ from pydantic import field_validator
 
 class Settings(BaseSettings):
     # General
-    APP_NAME: str = "PDF RAG Chatbot"
+    APP_NAME: str = "nuxeAI"
     ENV: str = "development"
     DEBUG: bool = True
 

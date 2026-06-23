@@ -1,5 +1,5 @@
 """
-Main FastAPI application entrypoint for the PDF RAG Chatbot SaaS.
+Main FastAPI application entrypoint for nuxeAI.
 """
 from contextlib import asynccontextmanager
 
@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Production-grade PDF RAG Chatbot SaaS backend",
+    description="Production-grade nuxeAI document chat backend",
     version="1.0.0",
     lifespan=lifespan,
 )

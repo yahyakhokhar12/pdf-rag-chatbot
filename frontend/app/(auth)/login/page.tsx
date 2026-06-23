@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ArrowRight, Eye, EyeOff, FileText, Loader2, Lock, Mail, Sparkles } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, Sparkles } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
+import { NuxeLogo } from '@/components/brand/nuxe-logo';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -43,10 +44,10 @@ export default function LoginPage() {
         <div className="hidden lg:block auth-copy">
           <div className="inline-flex items-center gap-2 rounded-full border border-teal-300/20 bg-teal-300/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-teal-200">
             <Sparkles className="h-3.5 w-3.5" />
-            Document intelligence
+            nuxeAI intelligence
           </div>
           <h1 className="mt-6 max-w-2xl text-5xl font-black leading-[1.02] tracking-tight text-white">
-            Turn dense PDFs into clear answers.
+            Turn dense PDFs into clear answers with nuxeAI.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-slate-400">
             Upload research, contracts, manuals, or reports and chat with them through a focused RAG workspace.
@@ -62,9 +63,7 @@ export default function LoginPage() {
 
         <div className="auth-card mx-auto w-full max-w-md animate-fade-in rounded-[28px] p-6 sm:p-8">
           <div className="mb-7 text-center">
-            <div className="auth-logo mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl">
-              <FileText className="h-7 w-7 text-slate-950" />
-            </div>
+            <NuxeLogo size="lg" showText={false} className="mb-4 justify-center" />
             <h2 className="text-2xl font-bold tracking-tight text-white">Welcome back</h2>
             <p className="mt-2 text-sm text-slate-500">Sign in and pick up where your documents left off.</p>
           </div>

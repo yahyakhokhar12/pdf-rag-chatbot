@@ -4,9 +4,9 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { ReactQueryProvider } from "@/providers/query-provider";
 
 export const metadata: Metadata = {
-  title: "PDF AI - RAG Chatbot",
-  description: "Chat with your PDF documents using advanced AI retrieval-augmented generation.",
-  keywords: ["PDF", "AI", "RAG", "chatbot", "documents"],
+  title: "nuxeAI - Document Chat",
+  description: "Chat with your PDF documents using nuxeAI document intelligence.",
+  keywords: ["nuxeAI", "PDF", "AI", "RAG", "chatbot", "documents"],
 };
 
 export default function RootLayout({

@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ArrowRight, AtSign, Eye, EyeOff, FileText, Loader2, Lock, Mail, ShieldCheck, User, type LucideIcon } from 'lucide-react';
+import { ArrowRight, AtSign, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, User, type LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
+import { NuxeLogo } from '@/components/brand/nuxe-logo';
 
 const registerSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -67,7 +68,7 @@ export default function RegisterPage() {
             Private workspace
           </div>
           <h1 className="mt-6 max-w-2xl text-5xl font-black leading-[1.02] tracking-tight text-white">
-            Create your searchable PDF brain.
+            Create your nuxeAI document brain.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-slate-400">
             Register once, upload documents, and let the assistant keep citations, chat history, and retrieval in one calm workspace.
@@ -76,9 +77,7 @@ export default function RegisterPage() {
 
         <div className="auth-card mx-auto w-full max-w-md animate-fade-in rounded-[28px] p-6 sm:p-8">
           <div className="mb-6 text-center">
-            <div className="auth-logo mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl">
-              <FileText className="h-7 w-7 text-slate-950" />
-            </div>
+            <NuxeLogo size="lg" showText={false} className="mb-4 justify-center" />
             <h2 className="text-2xl font-bold tracking-tight text-white">Create account</h2>
             <p className="mt-2 text-sm text-slate-500">Start chatting with your PDFs in under a minute.</p>
           </div>
