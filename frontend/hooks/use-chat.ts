@@ -112,7 +112,12 @@ export function useChat() {
                 }
               } else if (data.type === 'error') {
                 console.error('Chat error:', data.content);
-                // Handle error state
+                const message = typeof data.content === 'string'
+                  ? data.content
+                  : 'Sorry, I encountered an error while processing your request.';
+                setMessages(prev => prev.map(m =>
+                  m.id === tempAsstId ? { ...m, content: `Sorry, I encountered an error: ${message}` } : m
+                ));
               }
             } catch (e) {
               console.error('Error parsing SSE:', e);

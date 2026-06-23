@@ -67,7 +67,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
                       fontSize: '0.85rem',
                       lineHeight: '1.6',
                     }}
-                    {...props}
                   >
                     {codeString}
                   </SyntaxHighlighter>
@@ -75,7 +74,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               );
             }
             return (
-              <code className="px-1.5 py-0.5 rounded text-sm font-mono" 
+              <code className="px-1.5 py-0.5 rounded text-sm font-mono"
                     style={{ 
                       background: 'rgba(139, 92, 246, 0.12)', 
                       color: '#c4b5fd',

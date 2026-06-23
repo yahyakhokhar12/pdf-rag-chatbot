@@ -58,14 +58,17 @@ export function UploadZone() {
   if (file) {
     const isError = uploadMutation.isError;
     const isSuccess = uploadMutation.isSuccess;
-    const isUploading = !isError && !isSuccess;
+    const errorMessage = uploadMutation.error instanceof Error
+      ? uploadMutation.error.message
+      : 'Upload failed. Please try again.';
 
     return (
-      <div className={`p-5 rounded-2xl flex items-center gap-4 transition-all ${
-        isSuccess ? 'border border-emerald-500/20' : isError ? 'border border-red-500/15' : 'border border-violet-500/15'
-      }`}
-           style={{ background: isSuccess ? 'rgba(16,185,129,0.04)' : isError ? 'rgba(239,68,68,0.04)' : 'rgba(139,92,246,0.06)' }}>
-        {/* File icon */}
+      <div
+        className={`p-5 rounded-2xl flex items-center gap-4 transition-all ${
+          isSuccess ? 'border border-emerald-500/20' : isError ? 'border border-red-500/15' : 'border border-violet-500/15'
+        }`}
+        style={{ background: isSuccess ? 'rgba(16,185,129,0.04)' : isError ? 'rgba(239,68,68,0.04)' : 'rgba(139,92,246,0.06)' }}
+      >
         <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
           isSuccess ? 'bg-emerald-500/10' : isError ? 'bg-red-500/10' : 'bg-violet-500/10'
         }`}>
@@ -80,7 +83,7 @@ export function UploadZone() {
             <span className="text-xs text-slate-500 shrink-0">{(file.size / (1024 * 1024)).toFixed(1)} MB</span>
           </div>
           {isError ? (
-            <p className="text-xs text-red-400">Upload failed. Please try again.</p>
+            <p className="text-xs text-red-400">{errorMessage}</p>
           ) : isSuccess ? (
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-emerald-400" />
@@ -120,23 +123,17 @@ export function UploadZone() {
       onClick={() => inputRef.current?.click()}
       className={`upload-zone p-10 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 ${isDragging ? 'dragging' : ''}`}
     >
-      <input
-        ref={inputRef}
-        type="file"
-        accept="application/pdf"
-        className="hidden"
-        onChange={handleChange}
-      />
+      <input ref={inputRef} type="file" accept="application/pdf" className="hidden" onChange={handleChange} />
 
       <div className={`relative mb-5 transition-all duration-300 ${isDragging ? 'scale-110' : ''}`}>
-        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-          isDragging ? 'shadow-lg' : ''
-        }`}
-             style={{
-               background: isDragging ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-               border: isDragging ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(255,255,255,0.06)',
-               boxShadow: isDragging ? '0 0 30px rgba(139,92,246,0.2)' : 'none',
-             }}>
+        <div
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${isDragging ? 'shadow-lg' : ''}`}
+          style={{
+            background: isDragging ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255, 255, 255, 0.04)',
+            border: isDragging ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(255,255,255,0.06)',
+            boxShadow: isDragging ? '0 0 30px rgba(139,92,246,0.2)' : 'none',
+          }}
+        >
           <UploadCloud className={`w-8 h-8 transition-colors ${isDragging ? 'text-violet-400' : 'text-slate-600'}`} />
         </div>
         {isDragging && (

@@ -1,11 +1,11 @@
 'use client';
 
-import { Menu, Bell, Search, Sparkles } from 'lucide-react';
+import { Bell, Sparkles } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { usePathname } from 'next/navigation';
 
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'Dashboard',
+  '/dashboard': 'Dashboard',
   '/documents': 'Documents',
   '/chat': 'Chat',
   '/admin': 'Admin',
@@ -29,11 +29,7 @@ export function Header() {
         borderBottom: '1px solid rgba(255,255,255,0.04)'
       }}>
       
-      {/* Mobile brand */}
       <div className="flex items-center gap-3 md:hidden">
-        <button className="text-slate-400 hover:text-white transition-colors p-1">
-          <Menu className="w-5 h-5" />
-        </button>
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg logo-glow flex items-center justify-center"
                style={{ background: 'linear-gradient(135deg, #8b5cf6, #6366f1)' }}>

@@ -40,13 +40,13 @@ export function ChatMessage({ message, onSourceClick, isStreaming }: ChatMessage
       {/* Avatar */}
       <div className="shrink-0 mt-0.5">
         {isUser ? (
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md ring-2 ring-violet-500/20"
-               style={{ background: 'linear-gradient(135deg, #8b5cf6, #4f46e5)' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md ring-2 ring-teal-300/20"
+               style={{ background: 'linear-gradient(135deg, #14b8a6, #0f766e)' }}>
             {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
         ) : (
           <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-md"
-               style={{ background: 'linear-gradient(135deg, #7c3aed, #4338ca)' }}>
+               style={{ background: 'linear-gradient(135deg, #5eead4, #f59e0b)' }}>
             <Sparkles className="w-4 h-4" />
           </div>
         )}
@@ -60,7 +60,7 @@ export function ChatMessage({ message, onSourceClick, isStreaming }: ChatMessage
               <>
                 <span className="text-gradient">AI Assistant</span>
                 {isStreaming && (
-                  <span className="text-xs font-normal text-violet-400/70 animate-pulse">thinking...</span>
+                  <span className="text-xs font-normal text-teal-300/70 animate-pulse">thinking...</span>
                 )}
               </>
             )}
@@ -83,7 +83,7 @@ export function ChatMessage({ message, onSourceClick, isStreaming }: ChatMessage
                   onClick={() => handleFeedback('like')}
                   className={`p-1.5 rounded-lg transition-all ${
                     feedback === 'like'
-                      ? 'text-violet-400 bg-violet-500/10'
+                      ? 'text-teal-300 bg-teal-300/10'
                       : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                   }`}
                   title="Helpful"
@@ -107,7 +107,9 @@ export function ChatMessage({ message, onSourceClick, isStreaming }: ChatMessage
         </div>
 
         {/* Message body */}
-        <div className={isStreaming ? 'opacity-90' : ''}>
+        <div className={`message-bubble rounded-2xl border border-white/[0.06] px-4 py-3 ${
+          isStreaming ? 'opacity-90' : ''
+        } ${isUser ? 'bg-white/[0.045]' : 'bg-teal-300/[0.045]'}`}>
           {isUser ? (
             <div className="text-slate-200 leading-relaxed whitespace-pre-wrap text-[15px]">
               {message.content}
@@ -143,8 +145,8 @@ export function ChatMessage({ message, onSourceClick, isStreaming }: ChatMessage
                   onClick={() => onSourceClick(source)}
                   className="source-chip inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-slate-300 font-medium"
                 >
-                  <span className="w-4 h-4 rounded flex items-center justify-center font-mono text-[10px] font-bold text-violet-300"
-                        style={{ background: 'rgba(139, 92, 246, 0.2)' }}>
+                  <span className="w-4 h-4 rounded flex items-center justify-center font-mono text-[10px] font-bold text-teal-200"
+                        style={{ background: 'rgba(20, 184, 166, 0.2)' }}>
                     {i + 1}
                   </span>
                   <span className="truncate max-w-[140px]">{source.document_name}</span>

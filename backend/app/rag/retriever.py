@@ -8,6 +8,7 @@ from rank_bm25 import BM25Okapi
 
 from app.rag.embeddings import embed_query
 from app.vectorstore.qdrant import search_vectors
+from app.vectorstore import local as local_store
 
 from app.config import get_settings
 
@@ -22,13 +23,22 @@ def semantic_search(
 ) -> list[dict[str, Any]]:
     """Perform semantic search using Qdrant vector similarity."""
     query_vector = embed_query(query)
-    results = search_vectors(
-        query_vector=query_vector,
-        top_k=top_k,
-        document_ids=document_ids,
-        user_id=user_id,
-    )
-    return results
+    try:
+        return search_vectors(
+            query_vector=query_vector,
+            top_k=top_k,
+            document_ids=document_ids,
+            user_id=user_id,
+        )
+    except Exception as exc:
+        print(f"Vector search failed, using local fallback: {exc}")
+        local_store.ensure_collection()
+        return local_store.search_vectors(
+            query_vector=query_vector,
+            top_k=top_k,
+            document_ids=document_ids,
+            user_id=user_id,
+        )
 
 
 def keyword_search(

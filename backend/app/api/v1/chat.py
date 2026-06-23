@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
-from app.database.session import get_db
+from app.database.session import async_session_factory, get_db
 from app.models.user import User
 from app.models.conversation import Conversation, Message, MessageRole, MessageFeedback
 from app.rag.pipeline import stream_rag_response, generate_title
@@ -53,15 +53,18 @@ async def sse_generator(
                 yield f"data: {json.dumps({'type': 'related_questions', 'content': event['content']})}\n\n"
 
             elif event_type == "done":
-                # Save assistant message to database
-                assistant_msg = Message(
-                    conversation_id=conversation_id,
-                    role=MessageRole.ASSISTANT,
-                    content=full_response,
-                    sources=sources_data,
-                )
-                db.add(assistant_msg)
-                await db.flush()
+                # Save assistant message in a short-lived session so the
+                # streaming response does not keep the request DB transaction open.
+                async with async_session_factory() as save_db:
+                    assistant_msg = Message(
+                        conversation_id=conversation_id,
+                        role=MessageRole.ASSISTANT,
+                        content=full_response,
+                        sources=sources_data,
+                    )
+                    save_db.add(assistant_msg)
+                    await save_db.commit()
+                    await save_db.refresh(assistant_msg)
 
                 yield f"data: {json.dumps({'type': 'done', 'message_id': str(assistant_msg.id), 'conversation_id': str(conversation_id)})}\n\n"
 
@@ -123,6 +126,11 @@ async def chat(
 
     # Prepare document IDs
     doc_ids = [str(d) for d in request.document_ids] if request.document_ids else None
+
+    # Commit before returning StreamingResponse. Otherwise SQLite keeps the
+    # request transaction open for the entire stream and follow-up actions like
+    # delete can hit "database is locked".
+    await db.commit()
 
     return StreamingResponse(
         sse_generator(

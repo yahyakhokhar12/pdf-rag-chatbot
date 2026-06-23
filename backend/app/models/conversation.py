@@ -5,8 +5,7 @@ import uuid
 from datetime import datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import String, Boolean, DateTime, Enum, ForeignKey, Text, func
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import String, Boolean, DateTime, Enum, ForeignKey, Text, Uuid, JSON, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.session import Base
@@ -27,13 +26,13 @@ class Conversation(Base):
     __tablename__ = "conversations"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+        Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     workspace_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="SET NULL"), nullable=True, index=True
+        Uuid(as_uuid=True), ForeignKey("workspaces.id", ondelete="SET NULL"), nullable=True, index=True
     )
     title: Mapped[str] = mapped_column(String(500), default="New Chat", nullable=False)
     is_pinned: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -56,16 +55,16 @@ class Message(Base):
     __tablename__ = "messages"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     conversation_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False, index=True
+        Uuid(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False, index=True
     )
     role: Mapped[MessageRole] = mapped_column(
         Enum(MessageRole), nullable=False
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    sources: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    sources: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     feedback: Mapped[MessageFeedback | None] = mapped_column(
         Enum(MessageFeedback), nullable=True
     )

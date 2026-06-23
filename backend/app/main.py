@@ -19,7 +19,7 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    if settings.DEBUG:
+    if settings.DEBUG or settings.DATABASE_URL.startswith("sqlite"):
         await init_db()
     
     # Ensure Qdrant collection exists
@@ -43,6 +43,8 @@ app = FastAPI(
 
 # CORS configuration
 origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",") if origin.strip()]
+origins.extend(["http://127.0.0.1:3000", "http://localhost:3000"])
+origins = sorted(set(origins))
 
 app.add_middleware(
     CORSMiddleware,

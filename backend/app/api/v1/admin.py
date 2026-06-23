@@ -5,6 +5,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
 from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +19,11 @@ from app.vectorstore.qdrant import get_collection_info
 from app.schemas.auth import UserResponse
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+
+class UserUpdateRequest(BaseModel):
+    is_active: bool | None = None
+    role: str | None = None
 
 
 @router.get("/analytics")
@@ -90,10 +96,9 @@ async def list_users(
 @router.patch("/users/{user_id}")
 async def update_user(
     user_id: uuid.UUID,
+    request: UserUpdateRequest,
     admin: Annotated[User, Depends(get_current_admin)],
     db: Annotated[AsyncSession, Depends(get_db)],
-    is_active: bool | None = None,
-    role: str | None = None,
 ):
     """Update a user's status or role."""
     result = await db.execute(select(User).where(User.id == user_id))
@@ -101,13 +106,13 @@ async def update_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if is_active is not None:
-        user.is_active = is_active
-    if role is not None:
+    if request.is_active is not None:
+        user.is_active = request.is_active
+    if request.role is not None:
         try:
-            user.role = UserRole(role)
+            user.role = UserRole(request.role)
         except ValueError:
-            raise HTTPException(status_code=400, detail=f"Invalid role: {role}")
+            raise HTTPException(status_code=400, detail=f"Invalid role: {request.role}")
 
     await db.flush()
     return UserResponse.model_validate(user)

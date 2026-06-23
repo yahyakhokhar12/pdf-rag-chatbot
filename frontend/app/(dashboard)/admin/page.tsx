@@ -18,7 +18,7 @@ export default function AdminPage() {
   // Fix: use useEffect for redirect, not during render
   useEffect(() => {
     if (user && user.role !== 'admin') {
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [user, router]);
 

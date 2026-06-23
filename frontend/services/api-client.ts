@@ -1,64 +1,83 @@
-import axios from 'axios';
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-export const apiClient = axios.create({
-  baseURL: `${API_URL}/api/v1`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+type ApiOptions = {
+  method?: string;
+  body?: BodyInit | null;
+  headers?: HeadersInit;
+};
 
-// Request interceptor to add the auth token
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+type ApiResponse<T> = { data: T };
 
-// Response interceptor for handling 401s and token refresh
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+export class ApiError extends Error {
+  response?: { status: number; data: { detail: string } };
 
-    // If error is 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.response = { status, data: { detail: message } };
+  }
+}
 
-      try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
-        }
+async function request<T>(path: string, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+  const headers = new Headers(options.headers || {});
 
-        const response = await axios.post(`${API_URL}/api/v1/auth/refresh`, {
-          refresh_token: refreshToken,
-        });
+  if (!token && typeof window !== 'undefined' && !path.startsWith('/auth/')) {
+    throw new ApiError('Please sign in again before continuing.', 401);
+  }
 
-        const { access_token, refresh_token: new_refresh_token } = response.data;
+  if (!(options.body instanceof FormData) && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
 
-        localStorage.setItem('accessToken', access_token);
-        localStorage.setItem('refreshToken', new_refresh_token);
+  const response = await fetch(`${API_URL}/api/v1${path}`, {
+    method: options.method || 'GET',
+    headers,
+    body: options.body,
+  });
 
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        // Clear tokens and redirect to login if refresh fails
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
-        }
-        return Promise.reject(refreshError);
+  if (!response.ok) {
+    let detail = `Request failed with status ${response.status}`;
+    try {
+      const data = await response.json();
+      detail = data.detail || detail;
+    } catch {}
+
+    if (response.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('auth-storage');
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.assign('/login');
       }
     }
 
-    return Promise.reject(error);
+    throw new ApiError(detail, response.status);
   }
-);
+
+  if (response.status === 204) {
+    return { data: undefined as T };
+  }
+
+  return { data: await response.json() as T };
+}
+
+export const apiClient = {
+  defaults: { baseURL: `${API_URL}/api/v1` },
+  get: <T>(path: string) => request<T>(path),
+  post: <T>(path: string, body?: any, config: { headers?: HeadersInit; onUploadProgress?: (event: { loaded: number; total?: number }) => void } = {}) => {
+    if (body instanceof FormData) {
+      const file = body.get('file');
+      if (file instanceof File) {
+        config.onUploadProgress?.({ loaded: file.size, total: file.size });
+      }
+    }
+    return request<T>(path, { method: 'POST', body: body instanceof FormData ? body : JSON.stringify(body ?? {}), headers: config.headers });
+  },
+  patch: <T>(path: string, body?: any) =>
+    request<T>(path, { method: 'PATCH', body: JSON.stringify(body ?? {}) }),
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+};

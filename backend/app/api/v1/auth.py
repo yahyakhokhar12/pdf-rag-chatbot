@@ -14,6 +14,7 @@ from app.auth import (
     validate_password_strength, create_password_reset_token, verify_password_reset_token,
 )
 from app.database.session import get_db
+from app.config import get_settings
 from app.api.deps import get_current_user
 from app.models.user import User, UserRole
 from app.models.workspace import Workspace, WorkspaceType
@@ -23,6 +24,7 @@ from app.schemas.auth import (
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+settings = get_settings()
 
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
@@ -86,9 +88,12 @@ async def login(request: LoginRequest, db: Annotated[AsyncSession, Depends(get_d
             detail="Account is deactivated",
         )
 
-    # Update last login
-    user.last_login = datetime.now(timezone.utc)
-    await db.flush()
+    # Avoid turning login into a write transaction when using SQLite locally.
+    # SQLite can lock under concurrent dev-server requests; auth should not fail
+    # just because a non-critical timestamp update cannot be written immediately.
+    if not settings.DATABASE_URL.startswith("sqlite"):
+        user.last_login = datetime.now(timezone.utc)
+        await db.flush()
 
     tokens = create_token_pair(str(user.id), user.role.value)
     return TokenResponse(**tokens)

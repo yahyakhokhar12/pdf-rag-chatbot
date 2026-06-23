@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -13,12 +13,18 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 
-export function Sidebar() {
+type SidebarProps = {
+  onNavigate?: () => void;
+  className?: string;
+};
+
+export function Sidebar({ onNavigate, className = '' }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuthStore();
 
   const navItems = [
-    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/documents', label: 'Documents', icon: FileText },
     { href: '/chat', label: 'Chat', icon: MessageSquare },
   ];
@@ -30,7 +36,7 @@ export function Sidebar() {
   navItems.push({ href: '/settings', label: 'Settings', icon: Settings });
 
   return (
-    <div className="w-64 sidebar-bg flex flex-col h-full hidden md:flex shrink-0">
+    <div className={`w-64 sidebar-bg flex flex-col h-full shrink-0 ${className}`}>
       {/* Logo */}
       <div className="p-5 border-b border-white/[0.05]">
         <Link href="/" className="flex items-center gap-3 group">
@@ -56,6 +62,7 @@ export function Sidebar() {
             <Link 
               key={item.href} 
               href={item.href}
+              onClick={onNavigate}
               className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 sidebar-item ${
                 isActive 
                   ? 'active text-white font-medium' 
@@ -91,7 +98,11 @@ export function Sidebar() {
           </div>
         </div>
         <button 
-          onClick={logout}
+          onClick={() => {
+            logout();
+            onNavigate?.();
+            router.push('/login');
+          }}
           className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm text-slate-500 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200 border border-transparent hover:border-red-500/10"
         >
           <div className="w-7 h-7 rounded-lg bg-slate-800/60 flex items-center justify-center">

@@ -5,15 +5,17 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { fetchUser, isAuthenticated, isLoading } = useAuthStore();
+  const { fetchUser, isAuthenticated, isLoading, isHydrated } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    if (!isHydrated) return;
     fetchUser();
-  }, [fetchUser]);
+  }, [fetchUser, isHydrated]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     if (isLoading) return;
 
     const isAuthRoute = pathname.startsWith('/login') || 
@@ -27,9 +29,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Redirect authenticated users away from auth pages
     if (isAuthenticated && isAuthRoute) {
-      router.push('/documents');
+      router.push('/dashboard');
     }
-  }, [isAuthenticated, isLoading, pathname, router]);
+  }, [isAuthenticated, isHydrated, isLoading, pathname, router]);
 
   return <>{children}</>;
 }

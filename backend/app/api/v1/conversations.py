@@ -5,7 +5,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, func, desc
+from sqlalchemy import select, func, desc, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -157,6 +157,7 @@ async def delete_conversation(
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
 
+    await db.execute(delete(Message).where(Message.conversation_id == conversation_id))
     await db.delete(conversation)
     await db.flush()
     return {"message": "Conversation deleted"}

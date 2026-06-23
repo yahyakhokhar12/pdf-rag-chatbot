@@ -8,6 +8,7 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isHydrated: boolean;
   error: string | null;
   
   login: (data: any) => Promise<void>;
@@ -22,7 +23,8 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      isLoading: false,
+      isLoading: true,
+      isHydrated: false,
       error: null,
 
       login: async (data) => {
@@ -33,6 +35,7 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('refreshToken', refresh_token);
           
           await get().fetchUser();
+          set({ isLoading: false });
         } catch (error: any) {
           set({ 
             error: error.response?.data?.detail || 'Login failed',
@@ -50,6 +53,7 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('refreshToken', refresh_token);
           
           await get().fetchUser();
+          set({ isLoading: false });
         } catch (error: any) {
           set({ 
             error: error.response?.data?.detail || 'Registration failed',
@@ -62,7 +66,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        set({ user: null, isAuthenticated: false, error: null });
+        set({ user: null, isAuthenticated: false, isLoading: false, error: null });
       },
 
       fetchUser: async () => {
@@ -88,6 +92,10 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage',
       // Only persist the user object, not loading/error states
       partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+      onRehydrateStorage: () => (state) => {
+        state?.clearError();
+        useAuthStore.setState({ isHydrated: true, isLoading: false });
+      },
     }
   )
 );
