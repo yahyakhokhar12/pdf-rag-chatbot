@@ -69,7 +69,7 @@ export default function NewChatPage() {
   const handleSend = (text: string, docIds?: string[]) => sendMessage(text, docIds);
 
   return (
-    <div className="absolute inset-0 flex" style={{ background: '#070611' }}>
+    <div className="absolute inset-0 flex chat-stage">
       <ChatSidebar conversations={convData?.conversations || []} isLoading={convLoading} />
 
       <div className="flex-1 flex flex-col min-w-0 relative">
@@ -82,12 +82,12 @@ export default function NewChatPage() {
                 <div className="relative inline-block mb-6">
                   <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto shadow-2xl"
                        style={{
-                         background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
-                         boxShadow: '0 0 40px rgba(139, 92, 246, 0.4), 0 0 80px rgba(139, 92, 246, 0.15)'
+                         background: 'linear-gradient(135deg, #5eead4, #fbbf24)',
+                         boxShadow: '0 22px 70px rgba(20, 184, 166, 0.28), 0 0 90px rgba(245, 158, 11, 0.16)'
                        }}>
                     <Bot className="w-10 h-10 text-white" />
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-400 rounded-full border-2 flex items-center justify-center"
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-teal-300 rounded-full border-2 flex items-center justify-center"
                        style={{ borderColor: '#070611' }}>
                     <Sparkles className="w-3 h-3 text-white" />
                   </div>
@@ -109,22 +109,10 @@ export default function NewChatPage() {
                     <button
                       key={i}
                       onClick={() => handleSend(s.prompt)}
-                      className="p-4 rounded-2xl text-left transition-all duration-200 group animate-fade-in"
+                      className="suggestion-card p-4 rounded-2xl text-left transition-all duration-200 group animate-fade-in"
                       style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.06)',
                         animationDelay: `${i * 0.1}s`,
                         animationFillMode: 'both',
-                      }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
-                        (e.currentTarget as HTMLElement).style.borderColor = s.border;
-                        (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.02)';
-                        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
-                        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
                       }}
                     >
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110"
@@ -159,19 +147,7 @@ export default function NewChatPage() {
                       <button
                         key={i}
                         onClick={() => handleSend(q)}
-                        className="px-3 py-1.5 text-sm text-violet-300 rounded-xl text-left transition-all hover:text-violet-200"
-                        style={{
-                          background: 'rgba(139, 92, 246, 0.06)',
-                          border: '1px solid rgba(139, 92, 246, 0.15)',
-                        }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLElement).style.background = 'rgba(139, 92, 246, 0.1)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139, 92, 246, 0.3)';
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLElement).style.background = 'rgba(139, 92, 246, 0.06)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139, 92, 246, 0.15)';
-                        }}
+                        className="related-question px-3 py-1.5 text-sm rounded-xl text-left transition-all"
                       >
                         {q}
                       </button>
@@ -185,7 +161,7 @@ export default function NewChatPage() {
 
         {/* Floating input */}
         <div className="absolute bottom-0 left-0 right-0"
-             style={{ background: 'linear-gradient(to top, #070611 60%, transparent)' }}>
+             style={{ background: 'linear-gradient(to top, rgba(3, 8, 10, 0.96) 52%, transparent)' }}>
           <div className="pt-8">
             <ChatInput onSendMessage={handleSend} isTyping={isTyping} />
           </div>

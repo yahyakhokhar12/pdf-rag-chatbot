@@ -13,7 +13,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-app overflow-hidden">
+    <div className="app-shell flex h-screen bg-app overflow-hidden">
       <Sidebar className="hidden md:flex" />
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
@@ -36,7 +36,7 @@ export default function DashboardLayout({
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
         <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+        <main className="app-main flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 relative">
           {children}
         </main>
       </div>

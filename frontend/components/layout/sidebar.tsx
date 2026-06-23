@@ -40,13 +40,13 @@ export function Sidebar({ onNavigate, className = '' }: SidebarProps) {
       {/* Logo */}
       <div className="p-5 border-b border-white/[0.05]">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl logo-glow flex items-center justify-center shrink-0 overflow-hidden" 
-               style={{ background: 'linear-gradient(135deg, #8b5cf6, #6366f1)' }}>
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 rounded-xl logo-glow flex items-center justify-center shrink-0 overflow-hidden"
+               style={{ background: 'linear-gradient(135deg, #5eead4, #fbbf24)' }}>
+            <Sparkles className="w-5 h-5 text-slate-950" />
           </div>
           <div>
             <span className="font-bold text-white text-base tracking-tight block leading-tight">PDF AI</span>
-            <span className="text-[10px] text-purple-400/70 font-medium tracking-widest uppercase">RAG Chatbot</span>
+            <span className="text-[10px] text-teal-300/80 font-medium tracking-widest uppercase">RAG Chatbot</span>
           </div>
         </Link>
       </div>
@@ -71,14 +71,14 @@ export function Sidebar({ onNavigate, className = '' }: SidebarProps) {
             >
               <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
                 isActive 
-                  ? 'bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25' 
+                  ? 'bg-gradient-to-br from-teal-300 to-amber-300 text-slate-950 shadow-lg shadow-teal-400/25'
                   : 'bg-slate-800/60 group-hover:bg-slate-700/60'
               }`}>
                 <Icon className="w-3.5 h-3.5" />
               </div>
               {item.label}
               {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-300 animate-pulse" />
               )}
             </Link>
           );
@@ -88,8 +88,8 @@ export function Sidebar({ onNavigate, className = '' }: SidebarProps) {
       {/* User Info */}
       <div className="p-3 border-t border-white/[0.05]">
         <div className="flex items-center gap-3 p-2.5 rounded-xl glass-card-hover mb-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 shadow"
-               style={{ background: 'linear-gradient(135deg, #8b5cf6, #4f46e5)' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-slate-950 text-xs font-bold shrink-0 shadow"
+               style={{ background: 'linear-gradient(135deg, #5eead4, #fbbf24)' }}>
             {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
