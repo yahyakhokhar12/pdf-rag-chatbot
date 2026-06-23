@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Env files
+.env
+*.env
+
+# Data
+backend/data/uploads/*
+backend/data/chroma/*
+!backend/data/uploads/.gitkeep
+!backend/data/chroma/.gitkeep
+
+# Node
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# OS
+.DS_Store
